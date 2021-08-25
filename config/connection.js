@@ -8,7 +8,7 @@ const db = mysql2.createConnection({
     password: process.env.DB_PASSWORD
 },
 
-    console.log(`Connected to the ${database} database. `));
+    console.log(`Connected to the database. `));
 
 db.connect((err) => {
     if (err) throw err;
