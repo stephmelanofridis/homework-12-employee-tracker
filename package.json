@@ -17,9 +17,16 @@
   },
   "homepage": "https://github.com/stephmelanofridis/homework-12-employee-tracker#readme",
   "dependencies": {
+    "asciiart-logo": "^0.2.6",
+    "colors": "^1.4.0",
     "console.table": "^0.10.0",
     "dotenv": "^10.0.0",
     "inquirer": "^8.1.2",
-    "mysql2": "^2.3.0"
+    "mysql2": "^2.3.0",
+    "stack": "^0.1.0",
+    "util": "^0.12.4"
+  },
+  "devDependencies": {
+    "cli-clear": "^1.0.4"
   }
 }
