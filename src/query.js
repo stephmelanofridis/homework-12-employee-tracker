@@ -9,8 +9,7 @@ const { displayHeading } = require('./heading');
 const query = util.promisify(db.query).bind(db);
 
 async function refresh() {
-    // await 
-    displayHeading();
+    await displayHeading();
     await startQuestions();
     clear();
 };
