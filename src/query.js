@@ -1,133 +1,29 @@
 const db = require('../config/connection');
-const consoleTable = require('console.table');
-const util = require('util');
 const inquirer = require('inquirer');
-const colors = require('colors');
-const clear = require('cli-clear');
+const util = require('util');
+const consoleTable = require('console.table');
 const { displayHeading } = require('./heading');
+var clear = require('cli-clear');
+
+const {
+    startMenu,
+    addNewEmployeeQuestions,
+    removeEmployeeQuestions,
+    updateEmployeeRoleQuestions,
+    addRoleQuestions,
+    removeRoleQuestions,
+    addDepartmentQuestions,
+    removeDepartmentQuestions,
+} = require('./questions');
+
 
 const query = util.promisify(db.query).bind(db);
 
 async function refresh() {
-    displayHeading();
+    await displayHeading();
     await startQuestions();
     clear();
 };
-
-const startMenu = [
-    {
-        type: 'rawlist',
-        message: 'What would you like to do?'.brightCyan,
-        choices: [
-            'View all employees',
-            'Add an employee',
-            'Remove an employee',
-            'Update an employees role',
-            'View all roles',
-            'Add a role',
-            'Remove a role',
-            'View all departments',
-            'Add a department',
-            'Remove a department',
-            'Exit'
-        ],
-        name: 'start',
-        pageSize: 12
-    }];
-
-const addNewEmployeeQuestions = (roles, managers) => [
-    {
-        type: 'input',
-        message: 'What is the new employees first name?'.brightCyan,
-        name: 'first_name',
-    },
-    {
-        type: 'input',
-        message: 'What is the new employees last name?'.brightCyan,
-        name: 'last_name',
-    },
-    {
-        type: 'list',
-        message: 'What is the new employees role?'.brightCyan,
-        name: 'role_id',
-        choices: roles,
-    },
-    {
-        type: 'list',
-        message: 'Who is the new employees manager?'.brightCyan,
-        name: 'manager_id',
-        choices: managers,
-    }
-];
-
-const removeEmployeeQuestions = (employees) => [
-    {
-        type: 'rawlist',
-        message: 'Select an employee to remove.'.brightCyan,
-        name: 'id',
-        choices: employees,
-    }
-];
-
-const updateEmployeeRoleQuestions = (employees, roles) => [
-    {
-        type: 'list',
-        message: 'Select the employee whos role you would like to update.'.brightCyan,
-        name: 'id',
-        choices: employees,
-    },
-    {
-        type: 'list',
-        message: 'What is the employees new role?'.brightCyan,
-        name: 'role_id',
-        choices: roles,
-    }
-];
-
-const addRoleQuestions = (departments) => [
-    {
-        type: 'input',
-        message: 'What is the title of the new role?'.brightCyan,
-        name: 'title',
-    },
-    {
-        type: 'input',
-        message: 'What is the salary of the new role?'.brightCyan,
-        name: 'salary',
-    },
-    {
-        type: 'list',
-        message: 'What department does the new role belong to?'.brightCyan,
-        name: 'department_id',
-        choices: departments,
-    }
-];
-
-const removeRoleQuestions = (roles) => [
-    {
-        type: 'rawlist',
-        message: 'Select a role to be removed.'.brightCyan,
-        name: 'id',
-        choices: roles,
-    }
-];
-
-const addDepartmentQuestions = [
-    {
-        type: 'input',
-        message: 'What is the name of the new department?'.brightCyan,
-        name: 'name',
-    }
-];
-
-const removeDepartmentQuestions = (departments) => [
-    {
-        type: 'rawlist',
-        message: 'Select department to be removed.'.brightCyan,
-        name: 'id',
-        choices: departments,
-    }
-];
 
 async function startQuestions() {
     const choice = await inquirer.prompt(startMenu);
@@ -165,13 +61,14 @@ async function startQuestions() {
         case 'Exit':
             console.log(`Disconnected from the employees_db database.`.brightMagenta);
             db.end();
-            process.exit();
-    };
-};
+            // process.exit();
+            break;
+    }
+}
 
 async function viewEmployees() {
     try {
-        const employeeTable = await query(`
+        const q = await query(`
         SELECT 
             employee.id AS ID, 
         CONCAT (employee.first_name,' ', employee.last_name) 
@@ -186,7 +83,7 @@ async function viewEmployees() {
         LEFT JOIN employee AS managers ON (employee.manager_id = managers.id)
         ORDER BY employee.first_name ASC
         `);
-        await console.table(employeeTable);
+        await console.table(q);
         refresh();
     } catch (err) {
         console.log(err);
@@ -195,7 +92,7 @@ async function viewEmployees() {
 
 async function viewRoles() {
     try {
-        const rolesTable = await query(`
+        const q = await query(`
         SELECT 
             role.id AS ID, 
             role.title AS 'Role',  
@@ -205,7 +102,7 @@ async function viewRoles() {
         INNER JOIN department ON (role.department_id = department.id)
         ORDER BY role.title ASC
         `);
-        await console.table(rolesTable);
+        await console.table(q);
         refresh();
     } catch (err) {
         console.log(err);
@@ -214,14 +111,14 @@ async function viewRoles() {
 
 async function viewDepartments() {
     try {
-        const departmentTable = await query(`
+        const q = await query(`
         SELECT 
             department.id AS ID, 
             department.name AS Department
         FROM department         
         ORDER BY department.name ASC
         `);
-        await console.table(departmentTable);
+        await console.table(q);
         refresh();
     } catch (err) {
         console.log(err);
@@ -229,16 +126,8 @@ async function viewDepartments() {
 };
 
 async function addNewEmployees() {
-    displayHeading();
+    await clear();
     try {
-        const roles = await query(`
-        SELECT 
-            id AS value, 
-            title AS name        
-        FROM role
-        ORDER BY role.title ASC
-        `);
-
         const managers = await query(`
         SELECT 
             id AS value,
@@ -246,7 +135,16 @@ async function addNewEmployees() {
         FROM employee
         ORDER BY employee.first_name ASC
         `);
+
         managers.push('>>>None<<<');
+
+        const roles = await query(`
+        SELECT 
+            id AS value, 
+        title AS name        
+        FROM role
+        ORDER BY role.title ASC
+        `);
 
         const choice = await inquirer.prompt(addNewEmployeeQuestions(roles, managers));
         if (choice.manager_id === ">>>None<<<") {
@@ -254,9 +152,9 @@ async function addNewEmployees() {
         }
 
         await query(`
-        INSERT INTO employee SET ?`,
-            choice
+        INSERT INTO employee SET ?`, choice
         );
+
         console.log(`New employee ${choice.first_name} ${choice.last_name} has been added.`.bgbrightYellow.black);
         await new Promise(resolve => setTimeout(resolve, 2000));
         clear();
