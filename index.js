@@ -6,7 +6,7 @@ const clear = require('cli-clear');
 
 async function init() {
     // await 
-    clear();
+    // clear();
     // await 
     console.log(`Connected to the employees_db database.`.brightYellow.bgBlack);
     // await 

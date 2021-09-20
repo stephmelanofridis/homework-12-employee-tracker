@@ -1,3 +1,4 @@
+USE employees_db;
 INSERT INTO
   department(name)
 VALUES
@@ -35,3 +36,7 @@ VALUES
   ("Joe", "Spiegel", 6, NULL),
   ("Vera", "West", 7, 4),
   ("Fay", "Beneventi", 8, NULL);
+SELECT
+  *
+FROM
+  employee;

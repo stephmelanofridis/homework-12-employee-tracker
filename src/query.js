@@ -9,7 +9,7 @@ const { displayHeading } = require('./heading');
 const query = util.promisify(db.query).bind(db);
 
 async function refresh() {
-    await displayHeading();
+    displayHeading();
     await startQuestions();
     clear();
 };
@@ -229,7 +229,7 @@ async function viewDepartments() {
 };
 
 async function addNewEmployees() {
-    await displayHeading();
+    displayHeading();
     try {
         const roles = await query(`
         SELECT 
@@ -257,9 +257,9 @@ async function addNewEmployees() {
         INSERT INTO employee SET ?`,
             choice
         );
-        await console.log(`New employee ${choice.first_name} ${choice.last_name} has been added.`.bgbrightYellow.black);
+        console.log(`New employee ${choice.first_name} ${choice.last_name} has been added.`.bgbrightYellow.black);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err)
@@ -282,9 +282,9 @@ async function removeEmployees() {
                 id: choice.id
             });
 
-        await console.log(`Employee ${choice.first_name} ${choice.last_name} has been removed`);
+        console.log(`Employee ${choice.first_name} ${choice.last_name} has been removed`);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err);
@@ -322,9 +322,9 @@ async function updateEmployeeRoles() {
             }
             ]);
 
-        await console.log(`Employee role has been updated to ${role}.`.brightYellow);
+        console.log(`Employee role has been updated to ${role}.`.brightYellow);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err);
@@ -347,9 +347,9 @@ async function addRoles() {
                 salary: choice.salary,
                 department_id: choice.department_id
             });
-        await console.log(`${choice.role} has been added.`.brightYellow);
+        console.log(`${choice.role} has been added.`.brightYellow);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err);
@@ -370,9 +370,9 @@ async function removeRoles() {
             {
                 id: choice.id
             });
-        await console.log(`${choice.role} has been removed.`.brightYellow);
+        console.log(`${choice.role} has been removed.`.brightYellow);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err)
@@ -387,9 +387,9 @@ async function addDepartments() {
             {
                 name: choice.name
             });
-        await console.log(`${choice.name} department has been added.`.brightYellow);
+        console.log(`${choice.name} department has been added.`.brightYellow);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err);
@@ -412,9 +412,9 @@ async function removeDepartments() {
             }
         );
 
-        await console.log(`${choice.name} has been removed.`);
+        console.log(`${choice.name} has been removed.`);
         await new Promise(resolve => setTimeout(resolve, 2000));
-        await clear();
+        clear();
         refresh();
     } catch (err) {
         console.log(err)
