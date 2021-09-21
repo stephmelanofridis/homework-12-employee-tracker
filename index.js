@@ -316,7 +316,6 @@ function displayHeading() {
     )
 };
 
-// module.exports = { displayHeading }
 
 const init = () => {
     displayHeading();
