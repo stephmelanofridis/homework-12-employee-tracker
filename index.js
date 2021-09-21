@@ -96,9 +96,21 @@ const viewEmployees = () => {
 };
 
 const addDepartments = async () => {
-    await inquirer.prompt(addDepartmentQuestions)
+    const addDepartmentQuestion = [
+        {
+            type: 'input',
+            message: 'What is the name of the new department?'.brightCyan,
+            name: 'departmentName',
+        }
+    ]
+    await inquirer.prompt(addDepartmentQuestion)
         .then(async (data) => {
-            await db.query(`INSERT INTO department (name) VALUES (?)`, data.departmentName)
+            await db.query(`
+            INSERT INTO 
+                department (name) 
+            VALUES 
+                (?)
+            `, data.departmentName)
                 .then((results) => {
                     console.log(`\nYou have successfully added ${data.departmentName}\n`)
                 });
@@ -107,17 +119,73 @@ const addDepartments = async () => {
 };
 
 async function addRoles() {
+    const addRoleQuestions = [
+        {
+            type: 'input',
+            message: 'What is the title of the new role?'.brightCyan,
+            name: 'roleTitle',
+        },
+        {
+            type: 'input',
+            message: 'What is the salary of the new role?'.brightCyan,
+            name: 'salary',
+        },
+        {
+            type: 'list',
+            message: 'What department does the new role belong to?'.brightCyan,
+            name: 'departmentName',
+            choices: departmentArr()
+        },
+    ]
     inquirer.prompt(addRoleQuestions).then(async (data) => {
         const { roleName, departmentName, salary } = data
-        await db.query(`INSERT INTO role (title,salary,department_id) 
-            SELECT ?,?,id FROM department WHERE name = ?;`, [roleName, salary, departmentName])
+        await db.query(`
+        INSERT INTO 
+            role (title,salary,department_id) 
+        SELECT 
+            ?,
+            ?,
+            id
+        FROM 
+            department 
+        WHERE 
+            name = ?;
+        `, [roleName, salary, departmentName])
             .then((results) => console.log(`\nYou have successfully added ${roleName} to ${departmentName}\n`))
             .catch((err) => console.log(err));
         setTimeout(startMenu, 1000);
     });
 };
 
-async function addNewEmployees() {
+async function addEmployee() {
+    let roleArray = await roleArr();
+    roleArray = roleArray.map(i => i.title)
+    let managerArray = await managerArr();
+    managerArray = managerArray.map(j => j.manager_name)
+    const addNewEmployeeQuestions = [
+        {
+            type: 'input',
+            message: 'What is the new employees first name?'.brightCyan,
+            name: 'firstName',
+        },
+        {
+            type: 'input',
+            message: 'What is the new employees last name?'.brightCyan,
+            name: 'lastName',
+        },
+        {
+            type: 'list',
+            message: 'What is the new employees role?'.brightCyan,
+            name: 'roleName',
+            choices: roleArray,
+        },
+        {
+            type: 'list',
+            message: 'Who is the new employees manager?'.brightCyan,
+            name: 'managerName',
+            choices: [...managerArray, 'No manager']
+        },
+    ]
     inquirer.prompt(addNewEmployeeQuestions)
         .then(async (data) => {
             console.log(data)
@@ -131,15 +199,44 @@ async function addNewEmployees() {
                     managerId = results[0].id
                 })
                 .catch((err) => console.log(err))
-            await db.query(`INSERT INTO employee (first_name,last_name,role_id,manager_id) SELECT ?,?,id,? FROM role WHERE title = ?;`,
+            await db.query(`
+            INSERT INTO 
+                employee (first_name,last_name,role_id,manager_id) 
+            SELECT 
+                ?,
+                ?,
+                id,
+                ? 
+            FROM 
+                role 
+            WHERE 
+                title = ?;
+            `,
                 [firstName, lastName, managerId, roleName])
-                .then((results) => console.log(`\nNew employee ${firstName} ${lastName} has been added with manager ${managerName}\n`))
+                .then((results) => console.log(`\nSuccessfully added ${firstName} ${lastName} with manager ${managerName}\n`))
                 .catch((err) => console.log(err))
-            setTimeout(initQuestions, 1000);
+            setTimeout(startMenu, 1000);
         });
 };
 
 async function updateEmployeeRole() {
+    let employeeArray = await employeeArr()
+    let roleArray = await roleArray()
+    roleArray = roleArray.map(i => i.title)
+    const updateEmployeeRoleQuestions = [
+        {
+            type: 'list',
+            message: 'Select the employee whos role you would like to update.'.brightCyan,
+            name: 'employeeName',
+            choices: employeeArray,
+        },
+        {
+            type: 'list',
+            message: 'What is the employees new role?'.brightCyan,
+            name: 'roleName',
+            choices: roleArray,
+        }
+    ];
     inquirer.prompt(updateEmployeeRoleQuestions)
         .then(async (data) => {
             const { employeeName, roleName } = data
@@ -155,8 +252,8 @@ async function updateEmployeeRole() {
                 })
                 .catch((err) => console.log(err))
             setTimeout(startMenu, 1000);
-        });
-};
+        })
+}
 
 const startMenu = () => {
     const menuQuestions = [
@@ -182,34 +279,34 @@ const startMenu = () => {
 
     inquirer.prompt(menuQuestions).then((data) => {
         switch (data.menu) {
-            case 'View All Departments':
+            case 'View all departments':
                 viewDepartments();
                 break;
-            case 'View All Roles':
+            case 'View all roles':
                 viewRoles();
                 break;
-            case 'View All Employees':
+            case 'View all employees':
                 viewEmployees();
                 break;
-            case 'Add Department':
+            case 'Add a department':
                 addDepartments();
                 break;
-            case 'Add Role':
+            case 'Add a role':
                 addRoles();
                 break;
-            case 'Add Employees':
+            case 'Add an employee':
                 addNewEmployees();
                 break;
-            case 'Update Employee Role':
+            case 'Update an employees role':
                 updateEmployeeRoles();
                 break;
-            case 'Remove Department':
+            case 'Remove a department':
                 removeDepartments();
                 break;
-            case 'Remove Employees':
+            case 'Remove an employee':
                 removeEmployees();
                 break;
-            case 'Remove Role':
+            case 'Remove a role':
                 removeRoles();
                 break;
             case 'Exit':
@@ -305,7 +402,6 @@ function displayHeading() {
         heading({
             name: 'Employee Tracker',
             font: 'Sweet',
-            // lineChars: 30,
             padding: 3,
             borderColor: 'bold-yellow',
             textColor: 'bold-magenta',
@@ -315,7 +411,6 @@ function displayHeading() {
             .render()
     )
 };
-
 
 const init = () => {
     displayHeading();
