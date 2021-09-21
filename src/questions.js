@@ -1,25 +1,9 @@
+const inquirer = require('inquirer');
+const mysql = require('mysql2');
+const util = require('util');
+const consoleTable = require('console.table');
+var clear = require('cli-clear');
 const colors = require('colors');
-
-const startMenu = [
-    {
-        type: 'rawlist',
-        message: 'What would you like to do?'.brightCyan,
-        choices: [
-            'View all employees',
-            'Add an employee',
-            'Remove an employee',
-            'Update an employees role',
-            'View all roles',
-            'Add a role',
-            'Remove a role',
-            'View all departments',
-            'Add a department',
-            'Remove a department',
-            'Exit'
-        ],
-        pageSize: 12,
-        name: 'start'
-    }];
 
 const addNewEmployeeQuestions = (roles, managers) => [
     {
@@ -116,7 +100,6 @@ const removeDepartmentQuestions = (departments) => [
 ];
 
 module.exports = {
-    startMenu,
     addNewEmployeeQuestions,
     removeEmployeeQuestions,
     updateEmployeeRoleQuestions,

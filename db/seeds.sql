@@ -1,6 +1,5 @@
-USE employees_db;
 INSERT INTO
-  department(name)
+  department (name)
 VALUES
   ("Operations"),
   ("Finance"),
@@ -21,10 +20,6 @@ VALUES
   ("Recruitment Officer", 50000, 3),
   ("Brand Manager", 55000, 4),
   ("Marketing Assistant", 45000, 4);
-SELECT
-  *
-FROM
-  role;
 INSERT INTO
   employee (first_name, last_name, role_id, manager_id)
 VALUES
@@ -36,7 +31,3 @@ VALUES
   ("Joe", "Spiegel", 6, NULL),
   ("Vera", "West", 7, 4),
   ("Fay", "Beneventi", 8, NULL);
-SELECT
-  *
-FROM
-  employee;
