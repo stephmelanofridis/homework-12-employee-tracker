@@ -209,7 +209,7 @@ async function addEmployee() {
         });
 };
 
-async function updateEmployeeRole() {
+async function updateEmployeeRoles() {
     let employeeArray = await employeeArr()
     let roleArray = await roleArray()
     roleArray = roleArray.map(i => i.title)
@@ -259,9 +259,6 @@ const startMenu = () => {
                 'Add a role',
                 'Add an employee',
                 'Update an employees role',
-                'Remove an employee',
-                'Remove a role',
-                'Remove a department',
                 'Exit'
             ]
         }
@@ -289,15 +286,6 @@ const startMenu = () => {
                 break;
             case 'Update an employees role':
                 updateEmployeeRoles();
-                break;
-            case 'Remove a department':
-                removeDepartments();
-                break;
-            case 'Remove an employee':
-                removeEmployees();
-                break;
-            case 'Remove a role':
-                removeRoles();
                 break;
             case 'Exit':
                 console.log(`Disconnected from the employees_db database.`.brightMagenta);
