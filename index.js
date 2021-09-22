@@ -7,16 +7,6 @@ const heading = require('asciiart-logo');
 const colors = require('colors');
 var clear = require('cli-clear');
 
-const {
-    addNewEmployeeQuestions,
-    //removeEmployeeQuestions,
-    updateEmployeeRoleQuestions,
-    addRoleQuestions,
-    //removeRoleQuestions,
-    addDepartmentQuestions,
-    //removeDepartmentQuestions
-} = require('./src/questions');
-
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -134,11 +124,11 @@ async function addRoles() {
             type: 'list',
             message: 'What department does the new role belong to?'.brightCyan,
             name: 'departmentName',
-            choices: departmentArr()
+            choices: await departmentArr()
         },
     ]
     inquirer.prompt(addRoleQuestions).then(async (data) => {
-        const { roleName, departmentName, salary } = data
+        const { roleTitle, departmentName, salary } = data
         await db.query(`
         INSERT INTO 
             role (title,salary,department_id) 
@@ -150,8 +140,8 @@ async function addRoles() {
             department 
         WHERE 
             name = ?;
-        `, [roleName, salary, departmentName])
-            .then((results) => console.log(`\nYou have successfully added ${roleName} to ${departmentName}\n`))
+        `, [roleTitle, salary, departmentName])
+            .then((results) => console.log(`\nYou have successfully added ${roleTitle} to ${departmentName}\n`))
             .catch((err) => console.log(err));
         setTimeout(startMenu, 1000);
     });
@@ -314,88 +304,7 @@ const startMenu = () => {
                 process.exit();
         }
     }).catch((err) => console.log(err));
-}
-
-// async function removeEmployees() {
-//     try {
-//         const employees = await query(`
-//         SELECT 
-//             id AS value, 
-//         CONCAT(first_name, ' ', last_name) AS name        
-//         FROM employee
-//         ORDER BY employee.first_name ASC
-//         `);
-//         const choice = await inquirer.prompt(removeEmployeeQuestions(employees));
-//         await query(`
-//         DELETE FROM employee WHERE ?`,
-//             {
-//                 id: choice.id
-//             });
-
-//         console.log(`Employee ${choice.first_name} ${choice.last_name} has been removed`);
-//         await new Promise(resolve => setTimeout(resolve, 2000));
-//         clear();
-//         refresh();
-//     } catch (err) {
-//         console.log(err);
-//     };
-// };
-
-
-
-// async function removeRoles() {
-//     try {
-//         const roles = await query(`
-//         SELECT 
-//             id AS value, 
-//         CONCAT(title, ' - Salary: ', salary) AS name      
-//         FROM role 
-//         `);
-//         const choice = await inquirer.prompt(removeRoleQuestions(roles));
-//         await query(`
-//         DELETE FROM role WHERE ?`,
-//             {
-//                 id: choice.id
-//             });
-//         console.log(`${choice.role} has been removed.`.brightYellow);
-//         await new Promise(resolve => setTimeout(resolve, 2000));
-//         clear();
-//         refresh();
-//     } catch (err) {
-//         console.log(err)
-//     };
-// };
-
-
-
-// async function removeDepartments() {
-//     try {
-//         const departments = await query(`
-//         SELECT 
-//             id AS value, 
-//             name     
-//         FROM department
-//         `);
-//         const choice = await inquirer.prompt(removeDepartmentQuestions(departments));
-//         await query(`
-//         DELETE FROM department WHERE ?`,
-//             {
-//                 id: choice.id
-//             }
-//         );
-
-//         console.log(`${choice.name} has been removed.`);
-//         await new Promise(resolve => setTimeout(resolve, 2000));
-//         clear();
-//         refresh();
-//     } catch (err) {
-//         console.log(err)
-//     };
-// };
-
-// const heading = require('asciiart-logo');
-
-// const description = `A command line application that allows you to view and update employee and manager details in one place`
+};
 
 function displayHeading() {
     console.log(
