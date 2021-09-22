@@ -38,9 +38,9 @@ Enter your password, then
 4. Start the application by running 
     node index
 
-6. You will then see a menu, using the arrow keys you can view, add and update the database.
-
 ![image](https://user-images.githubusercontent.com/82196946/134287564-fedfd9f1-5d9e-48bb-b816-c9e54e5ffad2.png)
+
+5. You will then see a menu, using the arrow keys you can view, add and update the database.
 
 ![image](https://user-images.githubusercontent.com/82196946/134287677-aaab525a-4981-4a96-8fe2-e94acba3e999.png)
 
