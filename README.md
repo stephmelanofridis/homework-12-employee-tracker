@@ -46,7 +46,7 @@ Enter your password, then
 
 ## Walkthrough Video
 
-
+Link to walkthrough video: https://watch.screencastify.com/v/ajw9ph0ClasXfd3zY1SY
 
 ## License
 
