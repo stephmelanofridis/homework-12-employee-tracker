@@ -147,7 +147,7 @@ async function addRoles() {
     });
 };
 
-async function addEmployee() {
+async function addNewEmployees() {
     let roleArray = await roleArr();
     roleArray = roleArray.map(i => i.title)
     let managerArray = await managerArr();
@@ -211,7 +211,7 @@ async function addEmployee() {
 
 async function updateEmployeeRoles() {
     let employeeArray = await employeeArr()
-    let roleArray = await roleArray()
+    let roleArray = await roleArr()
     roleArray = roleArray.map(i => i.title)
     const updateEmployeeRoleQuestions = [
         {
